@@ -17,6 +17,7 @@ The name is a throughly contrived recursive acronym.
 
 This is a simple PERL script that processes IRC chat commands.  
 The initial intent is to generate numbers to simulate the rolling of dice in RPGs.
+Based on (taken almost completely from) http://archive.oreilly.com/pub/h/1964.
 
 REQUIREMENTS
 ------------
@@ -40,7 +41,7 @@ No questions at all as of yet.
 
 MAINTAINERS
 -----------
-kbpickens 
+kbpickens https://github.com/kbpickens
 
 TODO
 ----
