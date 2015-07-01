@@ -47,3 +47,4 @@ TODO
 ----
 * Add a shortcut for rolling D&D 5e's (dis-)advantage rolls.
 * Expand to allow easy modification by users.
+* Add command line options.

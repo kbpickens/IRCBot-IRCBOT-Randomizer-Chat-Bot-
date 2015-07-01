@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 # IRCBot (IRCBot Randomizer Chat Bot).
 #    Copyright (C) 2015 Kevin Pickens
 #
@@ -35,6 +35,7 @@ my $nick = "IRCBot$time";
 # After testing, $login should be changed to a set value.
 my $login = $nick;
 
+print "Joining $channel.\n\n\n";
 
 # Connect to the IRC server.
 my $sock = new IO::Socket::INET(PeerAddr => $server,
@@ -68,10 +69,10 @@ while (my $input = <$sock>) {
     # We must respond to PINGs to avoid being disconnected.
     print $sock "PONG $1\r\n";
   } elsif ($input =~ /.*[: ]rolls [^\r\n]*.*$/i) {
+    # I was having problems with a CR fouling up some regexes.
+    $input =~ s/[\r]//;
     # This is the whole point of the bot.
     my $msg = $input;
-    # I was having problems with a CR fouling up some regexes.
-    $msg =~ s/[\r]//;
     # Identify the NICK of the individual asking for dice rolls.
     my $roller=$msg;
     $roller =~ s/^:([^!]*)!.*/$1/;
