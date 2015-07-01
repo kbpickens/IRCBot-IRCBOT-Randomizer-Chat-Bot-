@@ -1,16 +1,26 @@
 #!/usr/local/bin/perl -w
-# IRCBot.pl
 # IRCBot (IRCBot Randomizer Chat Bot).
+#    Copyright (C) 2015 Kevin Pickens
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# IRCBot.pl
 # Usage: perl IRCBot.pl
-# Currently Copyright 2015 Kevin Pickens.  Licensing is being sorted out.  
-# You are granted a non-exclusive license to use, and/or modify this program as you see fit for any purpose.  
-# You are granted a non-exclusive license to distribute this program for profit or not for profit as long as this header is included and any derivative is distributed under the same conditions.
-# This bot is based on http://archive.oreilly.com/pub/h/1964.  Any restrictions put in place by that source supercede any permissions granted by this 
+
 use strict;
 
 # We will use a raw socket to connect to the IRC server.
 use IO::Socket;
-use Data::Dumper;
 
 # The server to connect to and our details.
 my $server = "irc.server.somewhere";
@@ -36,10 +46,6 @@ my $sock = new IO::Socket::INET(PeerAddr => $server,
 print $sock "NICK $nick\r\n";
 print $sock "USER $login 8 * :IRCBot (IRCBOT-Randomizer-Chat-Bot)\r\n";
 
-# Log on to the server.
-print $sock "NICK $nick\r\n";
-print $sock "USER $login 8 * :RTC Bot (CONNECTION TEST)\r\n";
-
 # Read lines from the server until it tells us we have connected.
 while (my $input = <$sock>) {
   # Check the numerical responses from the server.
@@ -47,7 +53,8 @@ while (my $input = <$sock>) {
     # We are now logged in.
     last;
   } elsif ($input =~ /433/) {
-    die "Nickname is already in use.";
+    # Someone else is using the desired nickname, quit and let the user rerun later.
+    die "Nickname is already in use.\r\n";
   }
 }
 
@@ -63,35 +70,56 @@ while (my $input = <$sock>) {
   } elsif ($input =~ /.*[: ]rolls [^\r\n]*.*$/i) {
     # This is the whole point of the bot.
     my $msg = $input;
+    # I was having problems with a CR fouling up some regexes.
     $msg =~ s/[\r]//;
+    # Identify the NICK of the individual asking for dice rolls.
     my $roller=$msg;
     $roller =~ s/^:([^!]*)!.*/$1/;
+    # Identify all dice combinations and roll them.
     my $dice = $msg;
     my $response = "rolled";
     while ($dice =~ m/(\d+)[dD](\d+)([\+-]\d+)?/g) {
       $response.= " [$1d$2$3]=";
       $response.= roll($1,$2,$3);
     }
+    # Assemble response string.  Why did I do it this way?!  I think it was part of the initial testing.
     $msg =~ s/^.*[: ]rolls ([^\r\n]*).*$/PRIVMSG $channel :$roller $response/i;
     print "$msg\n\n";
     print $sock "$msg\r\n";
   } else {
-    # Print the raw line received by the bot.
+    # Print the raw line received by the bot.  I've left this for sanity testing by end-users to make sure it doesn't break the hosting IRCd.
     print "$input\n";
   }
 }
 
-sub roll {
+# Subroutine to roll the dice.
+#****f* roll
+# FUNCTION
+#   Rolls a given die/dice combination.
+# SYNOPSIS
+sub roll 
+# INPUTS
+#   $dice -- the number of dice to roll
+#   $sides -- the number of sides per die
+#   $bonus -- any modifier to the roll positive or negative
+# SOURCE
+{
+  # Set all of the parts of a roll.
   my ($dice,$sides,$bonus)=@_;
+  # Roll the first die.
   my $each=int(rand($sides)+1);
+  # Begin adding the rolls and the bonus (or penalty).
   my $total=$each+$bonus;
-  my $return="(";
-  $return.=$each;
+  # Begin building the result string.
+  my $return="(".$each;
+  # Roll all of the remaining dice.
   for (my $i=1;$i<$dice;$i++) {
     $each=int(rand($sides)+1);
     $return.=", ".$each;
     $total+=$each;
   }
+  # Finish the result string.
   $return.=")$bonus=$total";
   return $return;
 }
+#****
