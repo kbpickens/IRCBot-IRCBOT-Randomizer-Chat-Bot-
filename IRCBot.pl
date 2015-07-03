@@ -81,7 +81,11 @@ while (my $input = <$sock>) {
     my $response = "rolled";
     while ($dice =~ m/(\d+)[dD](\d+)([\+-]\d+)?/g) {
       $response.= " [$1d$2$3]=";
-      $response.= roll($1,$2,$3);
+      $response.= roll($1,$2, $3);
+    }
+    while ($dice =~ m/(\d+)[xX](\d+)/g) {
+      $response.= " [$1d$2 (exploding)]=";
+      $response.= rollexplode($1,$2);
     }
     while ($dice =~ m/(\d+)[dD]F?/g) {
       $response.= " [$1dF]=";
@@ -125,6 +129,42 @@ sub roll
   }
   # Finish the result string.
   $return.=")$bonus=$total";
+  return $return;
+}
+#****
+
+#****f* rollexplode
+# FUNCTION
+#   Rolls a given exploding die/dice combination.
+# SYNOPSIS
+sub rollexplode
+# INPUTS
+#   $dice -- the number of dice to roll
+#   $sides -- the number of sides per die
+# SOURCE
+{
+  # Set all of the parts of a roll.
+  my ($dice,$sides)=@_;
+  # Begin adding the rolls.
+  my $total=0;
+  # Begin building the result string.
+  my $return="(";
+  # Roll all of the dice.
+  for (my $i=1;$i<=$dice;$i++) {
+  my $dieroll=int(rand($sides)+1);
+  my $each=$dieroll;
+  while ($dieroll==$sides) {
+	$dieroll=int(rand($sides)+1);
+	$each+=$dieroll;
+  }
+  $return.=$i>1?", ":"".$each;
+  if($each>=$sides){
+	$return.="*";
+  }
+  $total+=$each;
+  }
+  # Finish the result string.
+  $return.=")=$total";
   return $return;
 }
 #****
