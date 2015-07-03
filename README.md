@@ -1,7 +1,7 @@
 # IRCBot-IRCBOT-Randomizer-Chat-Bot-
 CONTENTS OF THIS FILE
 ---------------------
-   
+ * Current Stable Version   
  * Introduction
  * Requirements
  * Installation
@@ -10,6 +10,10 @@ CONTENTS OF THIS FILE
  * FAQ
  * Maintainers
  
+CURRENT STABLE VERSION
+----------------------
+Current Version is: IRCBot Albacore.
+
 INTRODUCTION
 ------------
 An IRC bot intended for RPG use.
