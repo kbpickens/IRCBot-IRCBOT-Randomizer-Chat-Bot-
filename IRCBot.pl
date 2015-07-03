@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# IRCBot (IRCBot Randomizer Chat Bot).
+# IRCBot (IRCBot Randomizer Chat Bot). v. Boga
 #    Copyright (C) 2015 Kevin Pickens
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ use strict;
 use IO::Socket;
 
 # The server to connect to and our details.
-my $server = "irc.server.somewhere";
+my $server = "irc.freenode.net";
 # The port for the server.
 my $port = 6665;
 
@@ -83,6 +83,10 @@ while (my $input = <$sock>) {
       $response.= " [$1d$2$3]=";
       $response.= roll($1,$2,$3);
     }
+    while ($dice =~ m/(\d+)[dD]F?/g) {
+      $response.= " [$1dF]=";
+      $response.= rollfudge($1);
+    }
     # Assemble response string.  Why did I do it this way?!  I think it was part of the initial testing.
     $msg =~ s/^.*[: ]rolls ([^\r\n]*).*$/PRIVMSG $channel :$roller $response/i;
     print "$msg\n\n";
@@ -124,3 +128,37 @@ sub roll
   return $return;
 }
 #****
+
+#****f* rollfudge
+# FUNCTION
+#   Rolls a given Fudge die/dice combination.
+# SYNOPSIS
+sub rollfudge
+# INPUTS
+#   $dice -- the number of dice to roll
+# SOURCE
+{
+  # Set all of the parts of a roll.
+  my ($dice)=@_;
+  # Define sides.
+  my @sides=('-','=','+');
+  # Roll the first die.
+  my $each=int(rand(3));
+  # Begin adding the rolls and the bonus (or penalty).
+  my $total=$each;
+  # Begin building the result string.
+  my $return="(".$sides[$each];
+  # Roll all of the remaining dice.
+  for (my $i=1;$i<$dice;$i++) {
+    $each=int(rand(3));
+    $return.=", ".$sides[$each];
+    $total+=$each;
+  }
+  # Finish the result string.
+  $total-=$dice;
+  my $plus=$total>0?'+':'';
+  $return.=")=$plus$total levels";
+  return $return;
+}
+#****
+

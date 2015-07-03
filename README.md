@@ -47,4 +47,8 @@ TODO
 ----
 * Add a shortcut for rolling D&D 5e's (dis-)advantage rolls.
 * Expand to allow easy modification by users.
-* Add command line options.
+* Add command line options. [added: Boga]
+* Add Fudge dice
+* Add exploding dice (roll maximum, add additional die).
+* Add success count rolling.
+    * Add old WoD botch mechanics.
