@@ -79,15 +79,24 @@ while (my $input = <$sock>) {
     # Identify all dice combinations and roll them.
     my $dice = $msg;
     my $response = "rolled";
-    while ($dice =~ m/(\d+)[dD](\d+)([\+-]\d+)?/g) {
+    while ($dice =~ m/(\d+)[dD](\d+)(([\+-bB])(\d+)([bB])?)?/g) {
+# print "$3 / $4 / $5 / $6\n";
       $response.= " [$1d$2$3]=";
-      $response.= roll($1,$2, $3);
+      if($4 eq 'b'||$4 eq 'B') {
+	if($6 eq 'b'||$6 eq 'B'){
+          $response.=rollbeat($1,$2,$5,1);
+        } else {
+          $response.=rollbeat($1,$2,$5,0);
+        }
+      } else {
+        $response.= roll($1,$2, $3);
+      }
     }
     while ($dice =~ m/(\d+)[xX](\d+)/g) {
       $response.= " [$1d$2 (exploding)]=";
       $response.= rollexplode($1,$2);
     }
-    while ($dice =~ m/(\d+)[dD]F?/g) {
+    while ($dice =~ m/(\d+)[dD][fF]/g) {
       $response.= " [$1dF]=";
       $response.= rollfudge($1);
     }
@@ -132,6 +141,47 @@ sub roll
   return $return;
 }
 #****
+#****f* rollbeat
+# FUNCTION
+#   Rolls a given die/dice combination.
+# SYNOPSIS
+sub rollbeat
+# INPUTS
+#   $dice -- the number of dice to roll
+#   $sides -- the number of sides per die
+#   $target -- number to beat
+#   $botches -- whether 1s offset successes
+# SOURCE
+{
+  # Set all of the parts of a roll.
+  my ($dice,$sides,$target,$botches)=@_;
+  # Roll the first die.
+  my $each=int(rand($sides)+1);
+  # Begin adding the rolls and the bonus (or penalty).
+  my $total=0;
+  $total=($each>=$target?1:0);
+  print "$each / $total\n";
+  if($botches){$total=($each==1?$total-1:$total);}
+  # Begin building the result string.
+  my $return="(".$each;
+	$return.=($each>=$target?"+":"");
+  if($botches){$return.=($each==1?"-":"");}
+  # Roll all of the remaining dice.
+  for (my $i=1;$i<$dice;$i++) {
+    $each=int(rand($sides)+1);
+    $return.=", ".$each;
+	$return.=($each>=$target?"+":"");
+	if($botches){$return.=($each==1?"-":"");}
+    $total+=($each>=$target?1:0);
+  #print "$each / $total\n";
+    if($botches){$total=($each==1?$total-1:$total);}
+  }
+  # Finish the result string.
+  $return.=")=$total successes";
+  return $return;
+}
+#****
+
 
 #****f* rollexplode
 # FUNCTION
