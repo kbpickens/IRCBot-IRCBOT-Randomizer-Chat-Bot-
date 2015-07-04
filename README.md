@@ -12,7 +12,7 @@ CONTENTS OF THIS FILE
  
 CURRENT STABLE VERSION
 ----------------------
-Current Version is: IRCBot Albacore.
+Current Version is: IRCBot Boga.
 
 INTRODUCTION
 ------------
@@ -56,5 +56,6 @@ TODO
 * Add exploding dice (roll maximum, add additional die). [added: Boga]
 * Add success count rolling. [added: Boga]
     * Add old WoD botch mechanics. [added: Boga]
+    * Add 10-/9-/8-again mechanics.
 * Add help responder.
 * Add roll and keep.
