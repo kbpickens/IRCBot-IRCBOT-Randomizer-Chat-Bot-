@@ -1,7 +1,7 @@
 # IRCBot-IRCBOT-Randomizer-Chat-Bot-
 CONTENTS OF THIS FILE
 ---------------------
- * Current Stable Version   
+ * Current Stable Version
  * Introduction
  * Requirements
  * Installation
@@ -9,17 +9,17 @@ CONTENTS OF THIS FILE
  * Troubleshooting
  * FAQ
  * Maintainers
- 
+
 CURRENT STABLE VERSION
 ----------------------
-Current Version is: IRCBot Albacore.
+Current Version is: IRCBot Boga.
 
 INTRODUCTION
 ------------
 An IRC bot intended for RPG use.
 The name is a throughly contrived recursive acronym.
 
-This is a simple PERL script that processes IRC chat commands.  
+This is a simple PERL script that processes IRC chat commands.
 The initial intent is to generate numbers to simulate the rolling of dice in RPGs.
 Based on (taken almost completely from) http://archive.oreilly.com/pub/h/1964.
 
@@ -56,5 +56,12 @@ TODO
 * Add exploding dice (roll maximum, add additional die). [added: Boga]
 * Add success count rolling. [added: Boga]
     * Add old WoD botch mechanics. [added: Boga]
+<<<<<<< HEAD
 * Add help responder.
 * Add roll and keep.
+=======
+    * Add 10-/9-/8-again mechanics.
+* Add help responder.
+* Add roll and keep.
+ 
+>>>>>>> f5bcb2af98f84bfdbe65dbdd50b6ae493afcca1f
