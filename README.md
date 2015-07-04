@@ -58,4 +58,5 @@ TODO
     * Add old WoD botch mechanics. [added: Boga]
     * Add 10-/9-/8-again mechanics.
 * Add help responder.
-* Add roll and keep.
+* Add roll and keep. [added: Capelin]
+* Add quit command.
