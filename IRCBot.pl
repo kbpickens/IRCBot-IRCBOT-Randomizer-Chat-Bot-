@@ -79,8 +79,7 @@ while (my $input = <$sock>) {
     # Identify all dice combinations and roll them.
     my $dice = $msg;
     my $response = "rolled";
-    while ($dice =~ m/(\d+)[dD](\d+)(([\+-bB])(\d+)([bB])?)?/g) {
-# print "$3 / $4 / $5 / $6\n";
+    while ($dice =~ m/(\d+)[dD](\d+)(([\+-bBkK])(\d+)([bB])?)?/g) {
       $response.= " [$1d$2$3]=";
       if($4 eq 'b'||$4 eq 'B') {
 	if($6 eq 'b'||$6 eq 'B'){
@@ -88,6 +87,8 @@ while (my $input = <$sock>) {
         } else {
           $response.=rollbeat($1,$2,$5,0);
         }
+      }elsif($4 eq 'k'||$4 eq 'K'){
+        $response.=rollkeep($1,$2,$5,1);
       } else {
         $response.= roll($1,$2, $3);
       }
@@ -248,6 +249,53 @@ sub rollfudge
   $total-=$dice;
   my $plus=$total>0?'+':'';
   $return.=")=$plus$total levels";
+  return $return;
+}
+#****
+
+#****f* rollkeep
+# FUNCTION
+#   Rolls a given die/dice combination.
+# SYNOPSIS
+sub rollkeep
+# INPUTS
+#   $dice -- the number of dice to roll
+#   $sides -- the number of sides per die
+#   $keep -- the number of rolled dice to keep
+#   $high -- whether to keep high or low rolls
+# SOURCE
+{
+  # Set all of the parts of a roll.
+  my ($dice,$sides,$keep,$high)=@_;
+  # Roll the first die.
+  my $each=int(rand($sides)+1);
+  # Roll all of the remaining dice.
+  my @rolls=($each);
+  for (my $i=1;$i<$dice;$i++) {
+    $each=int(rand($sides)+1);
+	push @rolls, $each;
+  }
+  my $total=0;
+  my $return="(";
+  my @sorted;
+  if($high){
+    @sorted = sort {$b <=> $a} @rolls;
+  } else {
+    @sorted = sort {$a <=> $b} @rolls;
+  }
+  for (my $i=0;$i<$dice;$i++) {
+	if($i>0){
+	  $return.=", "
+	}
+	$return.=$sorted[$i];
+	if($i<$keep){
+	  $total+=$sorted[$i];
+	  $return.="k";
+	}
+print "$return\n";
+  }
+  # Finish the result string.
+  $return.=")=$total";
   return $return;
 }
 #****
